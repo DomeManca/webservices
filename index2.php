@@ -57,9 +57,9 @@ if ($method == 'GET') {
     // Verifica se i dati sono stati inviati correttamente
     if (!empty($data)) {
         // Esegui l'inserimento nel database
-        $sql = "INSERT INTO dati (campo1, campo2, campo3) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO dati (nome, cognome, email, eta, data_iscrizione) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sss", $data['campo1'], $data['campo2'], $data['campo3']);
+        $stmt->bind_param("sssis", $data['nome'], $data['cognome'], $data['email'], $data['eta'], $data['data_iscrizione']);
 
         if ($stmt->execute()) {
             echo "Dati inseriti con successo.";
@@ -78,9 +78,9 @@ if ($method == 'GET') {
         $id = $array[2];
         
         // Esegui l'aggiornamento nel database
-        $sql = "UPDATE dati SET campo1=?, campo2=?, campo3=? WHERE id=?";
+        $sql = "UPDATE dati SET nome=?, cognome=?, email=?, eta=?, data_iscrizione=? WHERE id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssi", $data['campo1'], $data['campo2'], $data['campo3'], $id);
+        $stmt->bind_param("sssssi", $data['nome'], $data['cognome'], $data['email'], $data['eta'], $data['data_iscrizione'], $id);
 
         if ($stmt->execute()) {
             echo "Dati aggiornati con successo.";
