@@ -22,13 +22,17 @@ if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
 
 // Validazione dei dati in input
 function validateData($data) {
-    if (!isset($data['nome']) || !isset($data['cognome']) || !isset($data['email']) || !isset($data['eta']) || !isset($data['data_iscrizione'])) {
+    if (
+        !isset($data['nome']) || !is_string($data['nome']) ||
+        !isset($data['cognome']) || !is_string($data['cognome']) ||
+        !isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL) ||
+        !isset($data['eta']) || !is_numeric($data['eta']) ||
+        !isset($data['data_iscrizione']) || !strtotime($data['data_iscrizione'])
+    ) {
         return false;
     }
     return true;
 }
-
-//echo $_SERVER['REQUEST_URI'];
 
 $array = explode('/', $_SERVER['REQUEST_URI']);
 $method = $_SERVER['REQUEST_METHOD'];
