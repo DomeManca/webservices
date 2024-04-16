@@ -13,12 +13,12 @@ if ($conn->connect_error) {
     die("Connessione fallita: " . $conn->connect_error);
 }
 
-// Validazione della richiesta
+/*/ Validazione della richiesta NON FUNZIONANTE
 if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
     http_response_code(400); // Bad Request
     echo "Richiesta deve essere di tipo JSON.";
     exit();
-}
+}/*/
 
 // Validazione dei dati in input
 function validateData($data) {
