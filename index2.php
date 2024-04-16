@@ -13,17 +13,35 @@ if ($conn->connect_error) {
     die("Connessione fallita: " . $conn->connect_error);
 }
 
+// Validazione della richiesta
+if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
+    http_response_code(400); // Bad Request
+    echo "Richiesta deve essere di tipo JSON.";
+    exit();
+}
+
+// Validazione dei dati in input
+function validateData($data) {
+    if (!isset($data['nome']) || !isset($data['cognome']) || !isset($data['email']) || !isset($data['eta']) || !isset($data['data_iscrizione'])) {
+        return false;
+    }
+    return true;
+}
+
 //echo $_SERVER['REQUEST_URI'];
 
-$array = explode('/',$_SERVER['REQUEST_URI']);
+$array = explode('/', $_SERVER['REQUEST_URI']);
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method == 'GET') {
     if (count($array) == 3 && $array[2] != '') {
         // Se è specificato un ID nella richiesta GET
         $id = $array[2];
-        $sql = "SELECT * FROM dati WHERE id = $id";
-        $result = $conn->query($sql);
+        $sql = "SELECT * FROM dati WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
@@ -55,7 +73,7 @@ if ($method == 'GET') {
     $data = json_decode(file_get_contents("php://input"), true);
 
     // Verifica se i dati sono stati inviati correttamente
-    if (!empty($data)) {
+    if (!empty($data) && validateData($data)) {
         // Esegui l'inserimento nel database
         $sql = "INSERT INTO dati (nome, cognome, email, eta, data_iscrizione) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
@@ -78,14 +96,18 @@ if ($method == 'GET') {
         $id = $array[2];
         
         // Esegui l'aggiornamento nel database
-        $sql = "UPDATE dati SET nome=?, cognome=?, email=?, eta=?, data_iscrizione=? WHERE id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssi", $data['nome'], $data['cognome'], $data['email'], $data['eta'], $data['data_iscrizione'], $id);
+        if (!empty($data) && validateData($data)) {
+            $sql = "UPDATE dati SET nome=?, cognome=?, email=?, eta=?, data_iscrizione=? WHERE id=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssssi", $data['nome'], $data['cognome'], $data['email'], $data['eta'], $data['data_iscrizione'], $id);
 
-        if ($stmt->execute()) {
-            echo "Dati aggiornati con successo.";
+            if ($stmt->execute()) {
+                echo "Dati aggiornati con successo.";
+            } else {
+                echo "Errore durante l'aggiornamento dei dati.";
+            }
         } else {
-            echo "Errore durante l'aggiornamento dei dati.";
+            echo "Dati non validi.";
         }
     } else {
         echo "ID non specificato.";
