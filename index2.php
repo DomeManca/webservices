@@ -1,3 +1,4 @@
+
 <?php
 
 // Connessione al database
@@ -54,7 +55,6 @@ if ($method == 'GET') {
             echo json_encode($row);
         } else {
             http_response_code(404); // Non trovato
-            echo "Nessun risultato trovato con ID $id";
         }
     } elseif (count($array) == 3 && $array[2] == '') {
         // Se non è specificato un ID nella richiesta GET
@@ -70,12 +70,10 @@ if ($method == 'GET') {
             echo json_encode($rows);
         } else {
             http_response_code(404); // Non trovato
-            echo "Nessun risultato trovato nella tabella.";
         }
     } else {
         // Se il metodo HTTP non è GET
         http_response_code(405); // Metodo non consentito
-        echo "Metodo non consentito";
     }
 } elseif ($method == 'POST') {
     // Esegui l'inserimento dei dati
@@ -90,14 +88,11 @@ if ($method == 'GET') {
 
         if ($stmt->execute()) {
             http_response_code(201); // Creato
-            echo "Dati inseriti con successo.";
         } else {
             http_response_code(500); // Errore interno del server
-            echo "Errore durante l'inserimento dei dati.";
         }
     } else {
         http_response_code(400); // Richiesta non valida
-        echo "Dati non validi.";
     }
 } elseif ($method == 'PUT') {
     // Esegui l'aggiornamento dei dati
@@ -115,18 +110,14 @@ if ($method == 'GET') {
 
             if ($stmt->execute()) {
                 http_response_code(200); // Successo
-                echo "Dati aggiornati con successo.";
             } else {
                 http_response_code(500); // Errore interno del server
-                echo "Errore durante l'aggiornamento dei dati.";
             }
         } else {
             http_response_code(400); // Richiesta non valida
-            echo "Dati non validi.";
         }
     } else {
         http_response_code(400); // Richiesta non valida
-        echo "ID non specificato.";
     }
 } elseif ($method == 'DELETE') {
     // Esegui la cancellazione dei dati
@@ -140,19 +131,15 @@ if ($method == 'GET') {
 
         if ($stmt->execute()) {
             http_response_code(200); // Successo
-            echo "Dati cancellati con successo.";
         } else {
             http_response_code(500); // Errore interno del server
-            echo "Errore durante la cancellazione dei dati.";
         }
     } else {
         http_response_code(400); // Richiesta non valida
-        echo "ID non specificato.";
     }
 } else {
     // Se il metodo HTTP non è supportato
     http_response_code(405); // Metodo non consentito
-    echo "Metodo non consentito";
 }
 
 $conn->close();
