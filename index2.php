@@ -1,4 +1,5 @@
 
+
 <?php
 
 // Connessione al database
@@ -27,7 +28,7 @@ function validateData($data) {
     if (
         !isset($data['nome']) || !is_string($data['nome']) ||
         !isset($data['cognome']) || !is_string($data['cognome']) ||
-        !isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL) ||
+        !isset($data['email']) || !filter_var($data['email']) ||
         !isset($data['eta']) || !is_numeric($data['eta']) ||
         !isset($data['data_iscrizione']) || !strtotime($data['data_iscrizione'])
     ) {
@@ -87,7 +88,11 @@ if ($method == 'GET') {
         $stmt->bind_param("sssis", $data['nome'], $data['cognome'], $data['email'], $data['eta'], $data['data_iscrizione']);
 
         if ($stmt->execute()) {
-            http_response_code(201); // Creato
+            if ($stmt->affected_rows > 0) {
+                http_response_code(200); // Successo
+            } else {
+                http_response_code(404); // Risorsa non trovata
+            }
         } else {
             http_response_code(500); // Errore interno del server
         }
@@ -109,7 +114,11 @@ if ($method == 'GET') {
             $stmt->bind_param("sssssi", $data['nome'], $data['cognome'], $data['email'], $data['eta'], $data['data_iscrizione'], $id);
 
             if ($stmt->execute()) {
-                http_response_code(200); // Successo
+                if ($stmt->affected_rows > 0) {
+                    http_response_code(200); // Successo
+                } else {
+                    http_response_code(404); // Risorsa non trovata
+                }
             } else {
                 http_response_code(500); // Errore interno del server
             }
@@ -130,7 +139,11 @@ if ($method == 'GET') {
         $stmt->bind_param("i", $id);
 
         if ($stmt->execute()) {
-            http_response_code(200); // Successo
+            if ($stmt->affected_rows > 0) {
+                http_response_code(200); // Successo
+            } else {
+                http_response_code(404); // Risorsa non trovata
+            }
         } else {
             http_response_code(500); // Errore interno del server
         }
