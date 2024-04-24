@@ -150,6 +150,14 @@ if ($method == 'GET') {
     } else {
         http_response_code(400); // Richiesta non valida
     }
+} elseif ($method == 'OPTIONS') {
+    // Imposta gli header CORS per consentire le richieste da qualsiasi dominio
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type");
+    
+    // Invia la risposta come JSON
+    http_response_code(200);
 } else {
     // Se il metodo HTTP non è supportato
     http_response_code(405); // Metodo non consentito
